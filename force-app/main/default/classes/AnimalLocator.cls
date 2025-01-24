@@ -1,31 +1,29 @@
-public class AnimalLocator{
+public class AnimalLocator {
+  public static String getAnimalNameById(Integer IdValue) {
+    Http http = new Http();
 
-    public static String getAnimalNameById(Integer IdValue){
+    HttpRequest request = new HttpRequest();
 
-        Http http = new Http();
+    request.setEndpoint(
+      'https://th-apex-http-callout.herokuapp.com/animals/' + IdValue
+    );
 
-        HttpRequest request = new HttpRequest();
+    request.setMethod('GET');
 
-        request.setEndpoint('https://th-apex-http-callout.herokuapp.com/animals/'+IdValue);
+    HttpResponse response = http.send(request);
 
-        request.setMethod('GET');
+    String animalName = '';
 
-        HttpResponse response = http.send(request);
+    if (response.getStatusCode() == 200) {
+      Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(
+        response.getBody()
+      );
 
-        String animalName = '';
+      Map<string, object> animals = (Map<string, object>) results.get('animal');
 
-        if(response.getStatusCode() == 200){
-
-            Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
-
-            Map<string,object> animals = (Map<string,object>) results.get('animal');
-
-             animalName = string.valueof(animals.get('name'));
-
-        }
-        System.debug(animalName);
-        return animalName;
-
+      animalName = string.valueof(animals.get('name'));
     }
-
+    System.debug(animalName);
+    return animalName;
+  }
 }
